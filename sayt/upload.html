@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mening qo‘shiqlarim</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: url('background.png') no-repeat center center/cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 80px;
+      overflow-x: hidden;
+      color: white;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(6px);
+      z-index: 0;
+    }
+
+    h2 {
+      position: relative;
+      font-size: 2.3rem;
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+      z-index: 1;
+      animation: fadeIn 1s ease;
+    }
+
+    /* 🔍 Qidiruv input */
+    .search-box {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 30px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      backdrop-filter: blur(8px);
+      transition: 0.3s;
+    }
+
+    .search-box input::placeholder {
+      color: #ddd;
+    }
+
+    .search-box input:focus {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .songs-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 20px;
+      z-index: 1;
+    }
+
+    .song-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 16px;
+      padding: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      transition: 0.3s;
+    }
+
+    .song-card:hover {
+      transform: translateY(-6px);
+      background: rgba(255,255,255,0.12);
+    }
+
+    .song-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    audio {
+      width: 100%;
+      outline: none;
+      margin-top: 10px;
+      z-index: 2;
+    }
+
+    /* 🔊 To‘lqin animatsiyasi */
+    .wave {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: end;
+      gap: 3px;
+      z-index: 1;
+      opacity: 0;
+      transition: 0.3s;
+    }
+
+    .bar {
+      width: 4px;
+      height: 6px;
+      background: #00e0ff;
+      border-radius: 3px;
+      animation: none;
+    }
+
+    .playing .wave {
+      opacity: 1;
+    }
+
+    .playing .bar {
+      animation: bounce 0.6s infinite ease-in-out alternate;
+    }
+
+    .bar:nth-child(1) { animation-delay: 0s; }
+    .bar:nth-child(2) { animation-delay: 0.1s; }
+    .bar:nth-child(3) { animation-delay: 0.2s; }
+    .bar:nth-child(4) { animation-delay: 0.3s; }
+    .bar:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      from { height: 6px; }
+      to { height: 25px; }
+    }
+
+    a.back {
+      margin-top: 50px;
+      color: #00e0ff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s;
+      position: relative;
+      z-index: 2;
+    }
+
+    a.back:hover {
+      color: white;
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 500px) {
+      h2 { font-size: 1.8rem; }
+      .song-card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🎵 Shunchaki tingla</h2>
+
+  <div class="search-box">
+    <input type="text" id="search" placeholder="Qo‘shiq nomini kiriting... 🔍">
+  </div>
+
+  <div class="songs-container" id="songs"></div>
+
+  <a href="index.html" class="back">⬅ Orqaga qaytish</a>
+
+  <script>
+    // 🎶 Qo‘shiqlar ro‘yxati
+    const songs = [
+      { name: "1. Golden Brown (slowed)", file: "Golden Brown (slowed).mp3" },
+      { name: "2. Cry", file: "Cry.mp3" },
+      { name: "3. Chamber of Reflection", file: "Chamber Of Reflection.mp3" },
+      { name: "4. Theo Muiño", file: "Theo Muino.mp3" },
+      { name: "5. Tell Em", file: "Tell em.mp3" },
+      { name: "6. Vision", file: "VISION.mp3" },
+      { name: "7.   Snowfall", file: "snowfall.mp3" },
+      { name: "8. Closer (slowed)", file: "Closer.mp3" },
+    ];
+
+    const container = document.getElementById('songs');
+    const searchInput = document.getElementById('search');
+    let players = [];
+
+    function renderSongs(filter = "") {
+      container.innerHTML = "";
+      players = [];
+
+      songs
+        .filter(song => song.name.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(song => {
+          const card = document.createElement('div');
+          card.className = 'song-card';
+
+          const title = document.createElement('div');
+          title.className = 'song-name';
+          title.textContent = song.name;
+
+          const player = document.createElement('audio');
+          player.src = song.file;
+          player.controls = true;
+
+          const wave = document.createElement('div');
+          wave.className = 'wave';
+          for (let i = 0; i < 5; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            wave.appendChild(bar);
+          }
+
+          card.appendChild(title);
+          card.appendChild(player);
+          card.appendChild(wave);
+          container.appendChild(card);
+
+          players.push({ player, card });
+        });
+
+      // 🔊 Faqat bitta qo‘shiq chalsin
+      players.forEach(({ player, card }) => {
+        player.addEventListener('play', () => {
+          players.forEach(p => {
+            if (p.player !== player) {
+              p.player.pause();
+              p.card.classList.remove('playing');
+            }
+          });
+          card.classList.add('playing');
+        });
+
+        player.addEventListener('pause', () => {
+          card.classList.remove('playing');
+        });
+      });
+    }
+
+    renderSongs();
+
+    // 🔍 Qidiruv funksiyasi
+    searchInput.addEventListener('input', e => {
+      const value = e.target.value;
+      renderSongs(value);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+      { name: "1. Golden Brown (slowed)", file: "Golden Brown (slowed).mp3" },
+      { name: "2. Cry", file: "Cry.mp3" },
+      { name: "3. Chamber of Reflection", file: "Chamber Of Reflection.mp3" },
+      { name: "4. Theo Muiño", file: "Theo Muino.mp3" },
+      { name: "5. Tell Em", file: "Tell em.mp3" },
+      { name: "6. Vision", file: "VISION.mp3" },
+      { name: "7.   Snowfall", file: "snowfall.mp3" },
+      { name: "6. Closer (slowed)", file: "Closer.mp3" },
